@@ -63,26 +63,32 @@ String entropyToMnemonic(String entropyString) {
   if (entropy.length % 4 != 0) {
     throw ArgumentError(_INVALID_ENTROPY);
   }
-  final entropyBits = _bytesToBinary(entropy);
-  final checksumBits = _deriveChecksumBits(entropy);
-  final bits = entropyBits + checksumBits;
-  final regex = new RegExp(r".{1,11}", caseSensitive: false, multiLine: false);
-  final chunks = regex
-      .allMatches(bits)
-      .map((match) => match.group(0))
-      .toList(growable: false);
-  List<String> wordlist = WORDLIST;
-  List<String> tmpList = <String>[];
-  for (String word in wordlist) {
-    tmpList.add(word);
-  }
 
-  String words = chunks.map((binary) {
-    int binInt = _binaryToByte(binary);
-    String word = tmpList[binInt];
-    tmpList.removeAt(binInt);
-    return word;
-  }).join(' ');
+  List<String> wordlist = WORDLIST;
+  String words = '';
+  int i = 0;
+  while (i == 0) {
+    final entropyBits = _bytesToBinary(entropy);
+    final checksumBits = _deriveChecksumBits(entropy);
+    final bits = entropyBits + checksumBits;
+    final regex =
+        new RegExp(r".{1,11}", caseSensitive: false, multiLine: false);
+    final chunks = regex
+        .allMatches(bits)
+        .map((match) => match.group(0))
+        .toList(growable: false);
+    words = chunks.map((binary) => wordlist[_binaryToByte(binary)]).join(' ');
+    i = 1;
+    for (String word in words.split(' ')) {
+      try {
+        words.split(' ').singleWhere((String seedelement) => seedelement == word);
+      } catch (e) {
+        if (e.toString().contains('Too many elements')) {
+          i = 0;
+        }
+      }
+    }
+  }
   return words;
 }
 
