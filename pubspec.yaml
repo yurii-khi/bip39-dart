@@ -8,8 +8,14 @@ environment:
   sdk: '>=2.0.0-dev.58.0 <3.0.0'
 
 dependencies:
-  pointycastle: ^1.0.0-rc2
-  hex: ^0.1.2
+  pointycastle: #1.0.2 - TODO: review a7cb803
+    git:
+      url: git://github.com/KomodoPlatform/pointycastle.git
+      ref: a7cb803908988fd878263fe15e4cfcba6e293a94
+  hex: # ^0.1.2 - TODO: review 6afb93f
+    git:
+      url: git://github.com/KomodoPlatform/dart-hex.git
+      ref: 6afb93fbe9024b174bf7075338e7ca0fe9c0411b
   crypto: ^2.0.3
 dev_dependencies:
   test: ^1.0.0
