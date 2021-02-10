@@ -8,10 +8,10 @@ environment:
   sdk: '>=2.0.0-dev.58.0 <3.0.0'
 
 dependencies:
-  pointycastle: #2.0.1 - DONE: secure code reviewd 162a6a
+  pointycastle: #1.0.2 - DONE: secure code reviewd d106a92
     git:
       url: git://github.com/KomodoPlatform/pc-dart.git
-      ref: 162a6ac2b75c693ffa30cd2e4ff26757c91e988d
+      ref: d106a9218a9df81ef4e0ab239ce5db2fcd9a7435
   hex: # ^0.1.2 - DONE: secure code reviewed 6afb93f
     git:
       url: git://github.com/KomodoPlatform/dart-hex.git
