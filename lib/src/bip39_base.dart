@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:math';
 import 'dart:typed_data';
 import 'package:crypto/crypto.dart' show sha256;
@@ -49,7 +48,14 @@ String generateMnemonic(
     {int strength = 128, RandomBytes randomBytes = _randomBytes}) {
   assert(strength % 32 == 0);
   final entropy = randomBytes(strength ~/ 8);
-  return entropyToMnemonic(HEX.encode(entropy));
+  final String mnemonic = entropyToMnemonic(HEX.encode(entropy));
+  final List<String> words = mnemonic.split(' ');
+  if (words.length != words.toSet().length) {
+    // non-unique words detected, generate again
+    return generateMnemonic(strength: strength, randomBytes: randomBytes);
+  }
+
+  return mnemonic;
 }
 
 String entropyToMnemonic(String entropyString) {
@@ -66,29 +72,17 @@ String entropyToMnemonic(String entropyString) {
 
   List<String> wordlist = WORDLIST;
   String words = '';
-  int i = 0;
-  while (i == 0) {
-    final entropyBits = _bytesToBinary(entropy);
-    final checksumBits = _deriveChecksumBits(entropy);
-    final bits = entropyBits + checksumBits;
-    final regex =
-        new RegExp(r".{1,11}", caseSensitive: false, multiLine: false);
-    final chunks = regex
-        .allMatches(bits)
-        .map((match) => match.group(0))
-        .toList(growable: false);
-    words = chunks.map((binary) => wordlist[_binaryToByte(binary)]).join(' ');
-    i = 1;
-    for (String word in words.split(' ')) {
-      try {
-        words.split(' ').singleWhere((String seedelement) => seedelement == word);
-      } catch (e) {
-        if (e.toString().contains('Too many elements')) {
-          i = 0;
-        }
-      }
-    }
-  }
+
+  final entropyBits = _bytesToBinary(entropy);
+  final checksumBits = _deriveChecksumBits(entropy);
+  final bits = entropyBits + checksumBits;
+  final regex = new RegExp(r".{1,11}", caseSensitive: false, multiLine: false);
+  final chunks = regex
+      .allMatches(bits)
+      .map((match) => match.group(0))
+      .toList(growable: false);
+  words = chunks.map((binary) => wordlist[_binaryToByte(binary)]).join(' ');
+
   return words;
 }
 
