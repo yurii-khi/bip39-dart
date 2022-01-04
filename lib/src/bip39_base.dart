@@ -49,11 +49,6 @@ String generateMnemonic(
   assert(strength % 32 == 0);
   final entropy = randomBytes(strength ~/ 8);
   final String mnemonic = entropyToMnemonic(HEX.encode(entropy));
-  final List<String> words = mnemonic.split(' ');
-  if (words.length != words.toSet().length) {
-    // non-unique words detected, generate again
-    return generateMnemonic(strength: strength, randomBytes: randomBytes);
-  }
 
   return mnemonic;
 }
